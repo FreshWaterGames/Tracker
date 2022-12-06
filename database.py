@@ -50,13 +50,46 @@ def edit_db():
     try:
         cursor.execute(f"UPDATE tracker SET {field} = ? WHERE name = ?", (updated_field, name))
         connection.commit()
-        print("Successfully updated user!")
+        print(f"Successfully updated {updated_field}!")
     except Exception as e:
         print(e)
 
 
-def get_user_info_db():
-    target_name = input("Who do you want info about? >>")
+def number_db():
+    name = input("Type the name of the text you would like to edit >>")
+    value = 0
+    options = input("""
+        ----------------------
+        Type '0' to exit
+        Type '1' to + 1
+        Type '2' to - 1
+        Type '3' to + 5
+        Type '4' to - 5
+        ----------------------
+        >>""")
+
+    if options == "1":
+        value += 1
+    if options == "2":
+        value -= -1
+    if options == "3":
+        value += 5
+    if options == "4":
+        value -= 5
+    try:
+        cursor.execute(f"UPDATE tracker SET number = number + ? WHERE name = ?", (value, name))
+        connection.commit()
+        rows = cursor.execute("SELECT number FROM tracker WHERE name = ?", (name,), ).fetchall()
+
+        num = rows[0][0]
+
+        print(f"Number changed to {num}")
+    except Exception as e:
+        print(e)
+
+
+def display_db():
+    target_name = input("Type the name of the record you want to view >>")
     rows = cursor.execute("SELECT name, sub, number FROM tracker WHERE name = ?", (target_name,), ).fetchall()
 
     name = rows[0][0]
@@ -67,19 +100,19 @@ def get_user_info_db():
 
 
 def delete_db():
-    name = input("Type the name of what you want to delete >>")
+    name = input("Type the name of the record you want to delete >>")
     if name != "":
         cursor.execute("DELETE FROM tracker WHERE name = ?", (name,))
         connection.commit()
-        print("Successfully deleted")
+        print(f"Successfully deleted {name}")
 
 
-def display_db():
+def display_all_db():
     rows = cursor.execute("SELECT name, sub, number FROM tracker ORDER BY name ASC").fetchall()
 
     print("Data: ")
     for user in rows:
-        print(f"- {user[0]} - {user[1]} - {user[2]}")
+        print(f" {user[0]} - {user[1]} - {user[2]}")
 
 
 def exit_db():
@@ -93,10 +126,11 @@ def select_options():
     ----------------------
     Type '0' to exit
     Type '1' to insert new data
-    Type '2' to display data
-    Type '3' to delete data
-    Type '4' to edit data
-    Type '5' to get data information
+    Type '2' to delete data
+    Type '3' to edit data
+    Type '4' to display all data
+    Type '5' to display data
+    Type '6' to change number data
     ----------------------
     >>""")
 
@@ -105,13 +139,15 @@ def select_options():
     if options == "1":
         insert_db()
     if options == "2":
-        display_db()
-    if options == "3":
         delete_db()
-    if options == "4":
+    if options == "3":
         edit_db()
+    if options == "4":
+        display_all_db()
     if options == "5":
-        get_user_info_db()
+        display_db()
+    if options == "6":
+        number_db()
 
 
 # loop
