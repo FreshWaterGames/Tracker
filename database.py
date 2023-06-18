@@ -33,7 +33,7 @@ def insert_db():
         if name != "" and sub != "" and number != "":
             cursor.execute(f"INSERT INTO tracker VALUES ('{name}', '{sub}', '{number}')")
             connection.commit()
-            print(name + "has been added to the database!")
+            print(name + " has been added to the database!")
 
         else:
             print("One of the fields are empty! Please try again")
